@@ -7,7 +7,7 @@
     <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
     <script type="text/javascript">
         $(function() {
-            $.getJSON("api.php?method=allUsers&jsoncallback=?",
+            $.getJSON("api/api.php?method=allUsers&jsoncallback=?",
             function(dataGet) {
                 console.log(dataGet);
                 for(oneuser in dataGet) {
