@@ -2,6 +2,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en">
     <head>
+    <meta charset="UTF-8">
     <title>使用PHP、jQuery和JSONP</title>
     <!-- Include the latest version of jQuery library -->
     <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
