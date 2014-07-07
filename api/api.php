@@ -8,6 +8,7 @@ if(function_exists($_GET['method'])){
     $_GET['method']();
 }
 else{
+    http_response_code(400);
     echo 'Wrong Method.';
 }
 //Here is the function to get
