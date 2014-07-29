@@ -3,9 +3,9 @@
 <html lang="en">
     <head>
     <meta charset="UTF-8">
-    <title>使用PHP、jQuery和JSONP</title>
+    <title>Sample</title>
     <!-- Include the latest version of jQuery library -->
-    <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.1.1-rc2/jquery.min.js"></script>
     <script type="text/javascript">
         $(function() {
             $.getJSON("api/api.php?method=allUsers&jsoncallback=?",
