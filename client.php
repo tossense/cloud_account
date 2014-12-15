@@ -8,18 +8,42 @@
     <script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.1.1-rc2/jquery.min.js"></script>
     <script type="text/javascript">
         $(function() {
-            $.getJSON("api/api.php?method=allUsers&jsoncallback=?",
+            $.getJSON("api/api.php?method=userBalance&jsoncallback=?",
             function(dataGet) {
-                console.log(dataGet);
-                for(oneuser in dataGet) {
-                    var user = dataGet[oneuser];
-                    $("#output").append(user.name + "<br />");
-                }
+                // for(var oneuser in dataGet["users"]) {
+                //     console.log(JSON.stringify(oneuser));
+                //     var user = dataGet["users"][oneuser];
+                //     if(user.name)
+                //         $("#output").append(user.name + ":"+ user.balance+"<br />");
+                // }
+                drawTable(dataGet["users"]);
             });
         });
-        </script>
+    </script>
+    <link rel="stylesheet" href="style.css">
     </head>
     <body>
-    <div id="output"></div>
+    <div id="output">
+        <table id="balanceTable">
+        <tr>
+            <th>User Name</th>
+            <th>Balance</th>
+        </tr>
+        </table>
+    </div>
+    <script type="text/javascript">
+        var drawTable = function (data) {
+            for (var i = 0; i < data.length; i++) {
+                drawRow(data[i]);
+            }
+        }
+
+        var drawRow = function drawRow(rowData) {
+            var row = $("<tr />")
+            $("#balanceTable").append(row); //this will append tr element to table... keep its reference for a while since we will add cels into it
+            row.append($("<td>" + rowData.name + "</td>"));
+            row.append($("<td>" + rowData.balance + "</td>"));
+        }
+    </script>
    </body>
 </html>

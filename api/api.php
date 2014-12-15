@@ -1,7 +1,12 @@
 <?PHP
-/*PHP Public API*/
-//Include the database connection
-include('connection.php');
+
+include('../private/db.conf');
+
+mysql_connect( $mysql_db_hostname, $mysql_db_user, $mysql_db_password )
+    or die("Could not connect: " . mysql_error());
+mysql_select_db($mysql_db_database) or die("Could not select db: " . mysql_error());
+
+
 //Now we check if the function exists
 if(function_exists($_GET['method'])){
     //Call the passed function
@@ -12,18 +17,28 @@ else{
     echo 'Wrong Method.';
 }
 //Here is the function to get
-function allUsers(){
-    //Get all users from the database
-    $sql_users=mysql_query("Select name FROM ca_users") or DIE (mysql_error());
-    //New array called users
+function userBalance(){
+    $query = "SELECT name, balance FROM ca_users";
+    $username = $_GET['username'];
+    if($username)
+        $query = $query." WHERE name='".$username."'";
     $users=array();
-    //Loop through each result and put each result into a single array
-    while($user=mysql_fetch_array($sql_users)){
-        $users[]=$user;
+    $res = mysql_query($query);
+    if($res){
+        while($row=mysql_fetch_array($res, MYSQL_ASSOC)){
+            $users['users'][]=$row;
+        }
     }
-    //Set $users to json encode $users
+    else{
+        //echo 'NULL';
+    }
+    if($_GET['ysdebug']=='1')
+        $users['debug'] = $query;
     $users=json_encode($users);
-    //Okay here is the JSONP
-    echo $_GET['jsoncallback'].'('.$users.')';
+    if($_GET['jsoncallback'])
+        echo $_GET['jsoncallback'].'('.$users.')';
+    else
+        echo $users;
 }
+
 ?>
