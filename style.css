@@ -1,2 +1,19 @@
 tr:nth-child(even) {background: #CCF}
 tr:nth-child(odd) {background: #FFF}
+body {
+	font: normal 100% Helvetica, Arial, sans-serif;
+}
+h1 {
+	font-size: 1.5em; 
+}
+small {
+	font-size: 0.875em;
+}
+.main {
+	float: right;
+	width: 70%; 
+}
+.leftBar {
+	float: left;
+	width: 25%;
+}

@@ -3,12 +3,13 @@
 <html lang="en">
     <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sample</title>
     <!-- Include the latest version of jQuery library -->
     <script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.1.1-rc2/jquery.min.js"></script>
     <script type="text/javascript">
         $(function() {
-            $.getJSON("api/api.php?method=userBalance&jsoncallback=?",
+            $.getJSON("api/get.php?method=userBalance&jsoncallback=?",
             function(dataGet) {
                 // for(var oneuser in dataGet["users"]) {
                 //     console.log(JSON.stringify(oneuser));
@@ -24,7 +25,7 @@
     </head>
     <body>
     <div id="output">
-        <table id="balanceTable">
+        <table id="balanceTable" align="center">
         <tr>
             <th>User Name</th>
             <th>Balance</th>

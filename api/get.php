@@ -6,7 +6,6 @@ mysql_connect( $mysql_db_hostname, $mysql_db_user, $mysql_db_password )
     or die("Could not connect: " . mysql_error());
 mysql_select_db($mysql_db_database) or die("Could not select db: " . mysql_error());
 
-
 //Now we check if the function exists
 if(function_exists($_GET['method'])){
     //Call the passed function
