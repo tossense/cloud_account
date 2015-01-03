@@ -1,10 +1,16 @@
 <?PHP
+// HTTP GET
+// Read only methods
+// Response Json(JsonP if there is jsoncallback param)
+
 require_once('../private/lib/ca_db.php');
 
 //Now we check if the function exists
 if(function_exists($_GET['method'])){
-    //Call the passed function
-    $_GET['method']();
+    $ret = json_encode($_GET['method']());
+    if($_GET['jsoncallback'])
+        $ret = $_GET['jsoncallback'].'('.$ret.')';
+    echo $ret;
 }
 else{
     http_response_code(400);
@@ -13,35 +19,34 @@ else{
 
 //Here is the function to get
 function userBalance(){
-    $link = link_ca_db();
+    $ret = array();
+    $ret["status"] = "OK";
+    if(!$_GET['group'])
+    {
+        $ret["status"] = "ERROR";
+        $ret["info"] = "No Group Param";
+        return $ret;
+    }
+    $link = connectCaDb($ret);
     if($link->connect_errno)
     {
-        die("Could not connect db: " . $link->connect_error);
+        return $ret;
     }
 
-    $query = "SELECT name, balance FROM ca_users";
-    $username = $_GET['username'];
-    if($username)
-        $query = $query." WHERE name='".$username."'";
-    $users=array();
-    $res = $link->query($query);
-    if($res){
-        while($row = $res->fetch_array(MYSQLI_ASSOC)){
-            $users['users'][]=$row;
+    $group = $_GET['group'];
+    $groupId = getGroupId($group, $link)[$group];
+    $sql = "SELECT tbUsers.name, tbGroupMembers.balance FROM tbUsers, tbGroupMembers WHERE tbGroupMembers.groupId=$groupId AND tbUsers.id=tbGroupMembers.userId";
+    $res = queryAndLogError($link, $sql, $ret);
+    if($res)
+    {
+        $ret["result"] = array();
+        while($row = $res->fetch_assoc())
+        {
+            $ret["result"][$row["name"]] = $row["balance"];
         }
-        $res->free();
-    }
-    else{
-        //echo 'NULL';
     }
     $link->close();
-    if($_GET['ysdebug']=='1')
-        $users['debug'] = $query;
-    $users=json_encode($users);
-    if($_GET['jsoncallback'])
-        echo $_GET['jsoncallback'].'('.$users.')';
-    else
-        echo $users;
+    return $ret;
 }
 
 ?>

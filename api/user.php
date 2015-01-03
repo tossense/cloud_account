@@ -2,14 +2,14 @@
 require_once('../private/lib/ca_db.php');
 require_once('../private/lib/ca_encrypt.php');
 
-$postdata = file_get_contents("php://input");
-if($postdata)
+$postData = file_get_contents("php://input");
+if($postData)
 {
-	$postjson = json_decode($postdata, true);
+	$postJson = json_decode($postData, true);
 	$ret = array();
-	if($postjson["action"] == "addUser")
+	if($postJson["action"] == "addUser")
 	{
-		$ret = addUser($postjson["username"], $postjson["password"]);
+		$ret = addUser($postJson);
 	}
 
 	echo(json_encode($ret));
@@ -19,8 +19,11 @@ else
 	http_response_code(400);
 }
 
-function addUser($u, $p)
+function addUser($postJson)
 {
+	$u = $postJson['username'];
+	$p = $postJson['password'];
+	$g = $postJson['group'];
 	$ret = array();
 	$ret["status"] = "OK";
 	if( !isValidUserName($u) )
@@ -29,10 +32,10 @@ function addUser($u, $p)
 		$ret["info"] = "invalid username";
 		return $ret;
 	}
-	$link = link_ca_db();
+	$link = connectCaDb();
 	$u = $link->real_escape_string($u);
-	$p = passwd_encrypt($p);
-	$sql = sprintf("INSERT INTO ca_users (name, password) VALUES ('%s', '%s')", $u, $p);
+	$p = passwordEncrypt($p);
+	$sql = "INSERT INTO tbUsers (name, password) VALUES ('$u', '$p')";
 	if(!$link->query($sql))
 	{
 		$ret["status"] = "ERROR";
@@ -40,6 +43,11 @@ function addUser($u, $p)
 	}
 	$link->close();
 	return $ret;
+}
+
+function addGroups($u, $groups)
+{
+	$groupIds = getGroupId($groups);
 }
 
 function isValidUserName($username) {
