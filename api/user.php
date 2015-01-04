@@ -32,7 +32,11 @@ function addUser($postJson)
 		$ret["info"] = "invalid username";
 		return $ret;
 	}
-	$link = connectCaDb();
+	$link = connectCaDb($ret);
+	if($link->connect_errno)
+	{
+		return $ret;
+	}
 	$u = $link->real_escape_string($u);
 	$p = passwordEncrypt($p);
 	$sql = "INSERT INTO tbUsers (name, password) VALUES ('$u', '$p')";

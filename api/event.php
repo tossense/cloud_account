@@ -39,7 +39,11 @@ function addEvent($eventJsonArray)
 	//$keyToColumn = array("time"=>"time", "place"=>"place", "comment"=>"comment");
 	$keyToColumn = array("place"=>"place", "comment"=>"comment");
 
-	$link = connectCaDb();
+	$link = connectCaDb($ret);
+	if($link->connect_errno)
+	{
+		return $ret;
+	}
 	$sqlArray = toSqlArray($eventJsonArray, $keyToColumn, $link);
 	$sqlArray["groupId"] = getGroupId($group, $link)[$group];
 	$sql = makeInsertSql("tbEvents", $sqlArray);
