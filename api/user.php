@@ -45,11 +45,6 @@ function addUser($postJson)
 	return $ret;
 }
 
-function addGroups($u, $groups)
-{
-	$groupIds = getGroupId($groups);
-}
-
 function isValidUserName($username) {
 	$len = strlen($username);
 	if( $len == 0 || $len > 20 || $len < 2 )
