@@ -101,8 +101,8 @@ function queryAndLogError($link, $sql, $ret)
  */
 function multiQueryAndLogError($link, $sql, $ret)
 {
-	$res = $link->query($sql);
-	if(!$link->multi_query($sql))
+	$res = $link->multi_query($sql);
+	if(!$res)
 	{
 		$ret["status"] = "ERROR";
 		$ret["info"] = "MySQL Error: ".$link->error;
