@@ -41,9 +41,7 @@ function addGroups($postJson)
     $userId = $userNameId[$u];
     if(!$userId)
     {
-        $ret["status"] = "ERROR";
-        $ret["info"] = "Invalid User.";
-        return $ret;
+        return retError($ret, "Invalid User");
     }
 
     if( count($gs) > 0 )
@@ -62,5 +60,12 @@ function addGroups($postJson)
     }
 
     $link->close();
+    return $ret;
+}
+
+function retError($ret, $info)
+{
+    $ret["status"] = "ERROR";
+    $ret["info"] = $info;
     return $ret;
 }

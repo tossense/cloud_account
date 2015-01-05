@@ -28,9 +28,7 @@ function addUser($postJson)
 	$ret["status"] = "OK";
 	if( !isValidUserName($u) )
 	{
-		$ret["status"] = "ERROR";
-		$ret["info"] = "invalid username";
-		return $ret;
+		return retError($ret, "invalid username");
 	}
 	$link = connectCaDb($ret);
 	if($link->connect_errno)
@@ -42,8 +40,7 @@ function addUser($postJson)
 	$sql = "INSERT INTO tbUsers (name, password) VALUES ('$u', '$p')";
 	if(!$link->query($sql))
 	{
-		$ret["status"] = "ERROR";
-		$ret["info"] = "sql insert error: ".$link->error;
+		return retError($ret, "sql insert error: ".$link->error);
 	}
 	$link->close();
 	return $ret;
@@ -60,4 +57,10 @@ function isValidUserName($username) {
 	 
 	return true;
 }
-?>
+
+function retError($ret, $info)
+{
+	$ret["status"] = "ERROR";
+	$ret["info"] = $info;
+	return $ret;
+}

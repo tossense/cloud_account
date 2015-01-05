@@ -15,6 +15,8 @@ if($postJsonArray)
 }
 else
 {
+	echo $postData,"\n";
+	echo "ja: ", $postJsonArray;
 	http_response_code(400);
 }
 
@@ -31,9 +33,7 @@ function addEvent($eventJsonArray)
 	$records = $eventJsonArray["records"];
 	if(!$ts || !$group || !$records)
 	{
-		$ret["status"] = "ERROR";
-		$ret["info"] = "Invalid Data.";
-		return $ret;
+		return retError($ret, "Invalid Data");
 	}
 
 	//$keyToColumn = array("time"=>"time", "place"=>"place", "comment"=>"comment");
@@ -46,6 +46,10 @@ function addEvent($eventJsonArray)
 	}
 	$sqlArray = toSqlArray($eventJsonArray, $keyToColumn, $link);
 	$sqlArray["groupId"] = getGroupId($group, $link)[$group];
+	if(!$sqlArray["groupId"])
+	{
+		return retError($ret, "Invalid group name");
+	}
 	$sql = makeInsertSql("tbEvents", $sqlArray);
 	if( queryAndLogError($link, $sql, $ret) )
 	{
@@ -64,8 +68,7 @@ function addEvent($eventJsonArray)
 		else
 		{
 			$unknownUsers = array_diff($users, array_keys($userNameIds));
-			$ret["status"] = "ERROR";
-			$ret["info"] = "Unknown User: ".implode(", ", $unknownUsers);
+			return retError($ret, "Unknown User: ".implode(", ", $unknownUsers));
 		}
 
 	}
@@ -87,4 +90,10 @@ function toSqlArray($json, $keyToColumn, $link=null)
 	}
 	return $sqlArray;
 }
-?>
+
+function retError($ret, $info)
+{
+	$ret["status"] = "ERROR";
+	$ret["info"] = $info;
+	return $ret;
+}

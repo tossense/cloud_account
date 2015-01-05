@@ -17,15 +17,16 @@ else{
     echo 'Wrong Method.';
 }
 
-//Here is the function to get
-function userBalance(){
+/**
+ * @return array
+ */
+function userBalance()
+{
     $ret = array();
     $ret["status"] = "OK";
     if(!$_GET['group'])
     {
-        $ret["status"] = "ERROR";
-        $ret["info"] = "No Group Param";
-        return $ret;
+        return retError($ret, "No Group Param");
     }
     $link = connectCaDb($ret);
     if($link->connect_errno)
@@ -34,8 +35,26 @@ function userBalance(){
     }
 
     $group = $_GET['group'];
-    $groupId = getGroupId($group, $link)[$group];
-    $sql = "SELECT tbUsers.name, tbGroupMembers.balance FROM tbUsers, tbGroupMembers WHERE tbGroupMembers.groupId=$groupId AND tbUsers.id=tbGroupMembers.userId";
+    if(strlen($group) > 50)
+    {
+        return retError($ret, "Group name too long");
+    }
+    $group = $link->real_escape_string($group);
+    $sql = <<<EOD
+        SELECT tbUsers.name, tbGroupMembers.balance
+        FROM tbUsers, tbGroupMembers, tbGroups
+        WHERE tbGroupMembers.groupId=tbGroups.id
+            AND tbGroups.name='$group'
+            AND tbUsers.id=tbGroupMembers.userId
+EOD;
+    $user = $_GET['user'];
+    if(strlen($user) > 30)
+    {
+        return retError($ret, "User name too long");
+    }
+    $user = $link->real_escape_string($user);
+    if($user)
+        $sql .= " AND tbUsers.name='$user'";
     $res = queryAndLogError($link, $sql, $ret);
     if($res)
     {
@@ -49,4 +68,37 @@ function userBalance(){
     return $ret;
 }
 
-?>
+function groupsList()
+{
+    $ret = array();
+    $ret["status"] = "OK";
+    $link = connectCaDb($ret);
+    if($link->connect_errno)
+    {
+        return $ret;
+    }
+    $sql = "SELECT name, description FROM tbGroups";
+    $res = queryAndLogError($link, $sql, $ret);
+    if($res)
+    {
+        $ret["result"] = array();
+        while($row = $res->fetch_assoc())
+        {
+            $ret["result"][$row["name"]] = $row["description"];
+        }
+    }
+    $link->close();
+    return $ret;
+}
+
+function groupList()
+{
+    return groupsList();
+}
+
+function retError($ret, $info)
+{
+    $ret["status"] = "ERROR";
+    $ret["info"] = $info;
+    return $ret;
+}
