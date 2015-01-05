@@ -45,8 +45,10 @@ function addEvent($eventJsonArray)
 		return $ret;
 	}
 	$sqlArray = toSqlArray($eventJsonArray, $keyToColumn, $link);
-	$sqlArray["groupId"] = getGroupId($group, $link)[$group];
-	if(!$sqlArray["groupId"])
+	$groupId = getGroupId($group, $link)[$group];
+	$sqlArray["groupId"] = $groupId;
+	$sqlArray["time"] = "FROM_UNIXTIME($ts)";
+	if(!$groupId)
 	{
 		return retError($ret, "Invalid group name");
 	}
@@ -58,12 +60,19 @@ function addEvent($eventJsonArray)
 		$userNameIds = getUserId($users, $link);
 		if(count($userNameIds) == count($records))
 		{
-			$sql = "";
+			$sqlRecords = "";
+			$sqlBalance = "";
 			foreach($userNameIds as $name => $userId)
 			{
-				$sql .= "INSERT INTO tbRecords (eventId, userId, money) VALUES ($eventId, $userId, $records[$name]);";
+				$money = $records[$name];
+				$sqlRecords .= "INSERT INTO tbRecords (eventId, userId, money) VALUES ($eventId, $userId, $money);";
+				$sqlBalance .= "UPDATE tbGroupMembers SET balance=balance+($money) WHERE groupId=$groupId AND userId=$userId;";
 			}
-			multiQueryAndLogError($link, $sql, $ret);
+			$sql = $sqlRecords.$sqlBalance;
+			if(multiQueryAndLogError($link, $sql, $ret))
+			{
+				while ($link->next_result()) {;} // flush multi_queries
+			}
 		}
 		else
 		{
@@ -85,8 +94,14 @@ function toSqlArray($json, $keyToColumn, $link=null)
 	$sqlArray = array();
 	foreach($keyToColumn as $key => $column)
 	{
-		if($json[$key])
-			$sqlArray[$column] = $link->real_escape_string($json[$key]);
+		$val = $json[$key];
+		if($val)
+		{
+			if(is_string($val))
+				$sqlArray[$column] = '"'.$link->real_escape_string($val).'"';
+			else
+				$sqlArray[$column] = $val;
+		}
 	}
 	return $sqlArray;
 }

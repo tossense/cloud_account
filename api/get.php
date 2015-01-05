@@ -96,6 +96,35 @@ function groupList()
     return groupsList();
 }
 
+function eventsList()
+{
+    $ret = array();
+    $ret["status"] = "OK";
+    $link = connectCaDb($ret);
+    if($link->connect_errno)
+    {
+        return $ret;
+    }
+    $sql = "SELECT UNIX_TIMESTAMP(time) AS time, place, comment FROM tbEvents";
+    $res = queryAndLogError($link, $sql, $ret);
+    if($res)
+    {
+        $ret["result"] = array();
+        while($row = $res->fetch_assoc())
+        {
+            $ret["result"][]["time"] = $row["time"];
+            $ret["result"][]["place"] = $row["place"];
+            $ret["result"][]["comment"] = $row["comment"];
+        }
+    }
+    $link->close();
+    return $ret;
+}
+function eventList()
+{
+    return eventsList();
+}
+
 function retError($ret, $info)
 {
     $ret["status"] = "ERROR";

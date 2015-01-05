@@ -113,7 +113,7 @@ function multiQueryAndLogError($link, $sql, $ret)
 function makeInsertSql($table, $sqlArray)
 {
 	$cols = '(' . implode(',', array_keys($sqlArray)) . ')';
-	$vals = '("' . implode('","', array_values($sqlArray)) . '")';
+	$vals = '(' . implode(',', array_values($sqlArray)) . ')';
 	$sql = "INSERT INTO $table $cols VALUES $vals;";
 	return $sql;
 }

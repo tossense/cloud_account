@@ -57,6 +57,9 @@ function addGroups($postJson)
         {
             return $ret;
         }
+        else{
+            while ($link->next_result()) {;} // flush multi_queries
+        }
     }
 
     $link->close();
