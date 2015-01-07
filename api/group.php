@@ -1,6 +1,7 @@
 <?php
 require_once('../private/lib/group_.php');
 
+
 $postData = file_get_contents("php://input");
 if($postData)
 {
@@ -17,4 +18,3 @@ else
 {
     http_response_code(400);
 }
-
