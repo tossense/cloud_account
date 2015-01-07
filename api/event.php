@@ -31,7 +31,7 @@ function addEvent($eventJsonArray)
 	$ts = $eventJsonArray["time"];
 	$group = $eventJsonArray["group"];
 	$records = $eventJsonArray["records"];
-	if(!$ts || !$group || !$records)
+	if(!$group || !$records)
 	{
 		return retError($ret, "Invalid Data");
 	}
@@ -47,7 +47,8 @@ function addEvent($eventJsonArray)
 	$sqlArray = toSqlArray($eventJsonArray, $keyToColumn, $link);
 	$groupId = getGroupId($group, $link)[$group];
 	$sqlArray["groupId"] = $groupId;
-	$sqlArray["time"] = "FROM_UNIXTIME($ts)";
+	if($ts)
+		$sqlArray["time"] = "FROM_UNIXTIME($ts)";
 	if(!$groupId)
 	{
 		return retError($ret, "Invalid group name");

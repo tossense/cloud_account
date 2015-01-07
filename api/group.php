@@ -1,6 +1,7 @@
 <?php
 require_once('../private/lib/ca_db.php');
 require_once('../private/lib/ca_encrypt.php');
+require_once('../private/lib/misc.php');
 
 $postData = file_get_contents("php://input");
 if($postData)
@@ -63,12 +64,5 @@ function addGroups($postJson)
     }
 
     $link->close();
-    return $ret;
-}
-
-function retError($ret, $info)
-{
-    $ret["status"] = "ERROR";
-    $ret["info"] = $info;
     return $ret;
 }
