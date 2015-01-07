@@ -1,6 +1,8 @@
 <?php
 require_once('../private/lib/ca_db.php');
 require_once('../private/lib/ca_encrypt.php');
+require_once('../private/lib/misc.php');
+require_once('../private/lib/group_.php');
 
 $postData = file_get_contents("php://input");
 if($postData)
@@ -23,7 +25,6 @@ function addUser($postJson)
 {
 	$u = $postJson['username'];
 	$p = $postJson['password'];
-	$g = $postJson['group'];
 	$ret = array();
 	$ret["status"] = "OK";
 	if( !isValidUserName($u) )
@@ -43,6 +44,14 @@ function addUser($postJson)
 		return retError($ret, "sql insert error: ".$link->error);
 	}
 	$link->close();
+	if($postJson['groups'] || $postJson['group'])
+	{
+		$addGroupJson = $postJson;
+		$addGroupJson['user'] = $u;
+		$retG = addGroups($addGroupJson);
+		if($retG["status"] != "OK")
+			$ret = $retG;
+	}
 	return $ret;
 }
 
@@ -56,11 +65,4 @@ function isValidUserName($username) {
 		return false;
 	 
 	return true;
-}
-
-function retError($ret, $info)
-{
-	$ret["status"] = "ERROR";
-	$ret["info"] = $info;
-	return $ret;
 }
