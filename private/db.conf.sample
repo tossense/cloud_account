@@ -1,0 +1,7 @@
+<?php
+$ca_db_hostname = "127.0.0.1";
+$ca_db_user = "youruser";
+$ca_db_password = "yourpassword";
+$ca_db_database = "yourdb";
+$ca_password_salt = "yoursalt";
+?>
