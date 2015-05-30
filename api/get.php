@@ -47,7 +47,9 @@ function userBalance()
             AND tbGroups.name='$group'
             AND tbUsers.id=tbGroupMembers.userId
 EOD;
-    $user = $_GET['user'];
+    $user = null;
+    if( isset($_GET['user']) )
+        $user = $_GET['user'];
     if(strlen($user) > 30)
     {
         return retError($ret, "User name too long");
