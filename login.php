@@ -20,13 +20,10 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 	$link = connectCaDb($ret);
 
 	$query = "SELECT `name` FROM `tbUsers` WHERE `password` = '$password' AND `name` = '$username'";
-	//  取得查询结果
 	$userInfo = $link->query($query);
 	if($userInfo && $userInfo->num_rows>0)
 	{
-		//  当验证通过后，启动 Session
 		session_start();
-		//  注册登陆成功的 admin 变量，并赋值 true
 		$_SESSION["login"] = true;
 		if(isset($posts["rememberme"]) && $posts["rememberme"]=="y")
 		{
@@ -49,7 +46,7 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 }
 else if($_SERVER['REQUEST_METHOD']=='GET')
 {
-	?>
+?>
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 	<html lang="en">
@@ -69,27 +66,27 @@ else if($_SERVER['REQUEST_METHOD']=='GET')
 			?>
 			<table width="300" border="0" align="center" cellpadding="2" cellspacing="2"> 
 				<tr> 
-					<td width="150"><div align="right">用户名：</div></td> 
+					<td width="150"><div align="right">User Name</div></td> 
 					<td width="150"><input type="text" name="username"></td> 
-				</tr> 
+				</tr>
 				<tr> 
-					<td><div align="right">密码：</div></td> 
+					<td><div align="right">Password</div></td> 
 					<td><input type="password" name="password"></td> 
-				</tr> 
+				</tr>
 				<tr>
 					<td></td>
 					<td><label class="remember-me">
-						<input type="checkbox" name="rememberme" checked="" value="y">下次自动登录
+						<input type="checkbox" name="rememberme" checked="" value="y">Remember Me
 					</label></td>
-				</tr> 
+				</tr>
 			</table> 
-			<p align="center"> 
-				<input type="submit" name="Submit" value="Submit"> 
-				<input type="reset" name="Reset" value="Reset"> 
-			</p> 
+			<p align="center">
+				<input type="submit" name="Submit" value="Submit">
+				<input type="reset" name="Reset" value="Reset">
+			</p>
 		</form>
-	</body> 
+	</body>
 	</html>
-	<?php
+<?php
 }
 ?>

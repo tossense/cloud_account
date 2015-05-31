@@ -1,5 +1,5 @@
 <?PHP
-require_once(__DIR__.'/../db.conf');
+require_once(__DIR__.'/../db.conf.php');
 
 function passwordEncrypt($passwordText)
 {
