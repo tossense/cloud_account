@@ -66,6 +66,8 @@ function addEvent($eventJsonArray)
 			foreach($userNameIds as $name => $userId)
 			{
 				$money = $records[$name];
+				if(!is_numeric($money))
+					return retError($ret, "Has Not Valid Number: ".$money);
 				$sqlRecords .= "INSERT INTO tbRecords (eventId, userId, money) VALUES ($eventId, $userId, $money);";
 				$sqlBalance .= "UPDATE tbGroupMembers SET balance=balance+($money) WHERE groupId=$groupId AND userId=$userId;";
 			}
