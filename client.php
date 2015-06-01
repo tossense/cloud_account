@@ -17,6 +17,18 @@ else
         <!-- Include the latest version of jQuery library -->
         <script type="text/javascript" src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
         <script type="text/javascript">
+            function initTable()
+            {
+                $("#balanceTable").empty();
+                var row = $("<tr />");
+                row.append($("<th>User Name</th>"));
+                row.append($("<th>Balance</th>"));
+                $("#balanceTable").append(row);
+                row = $("<tr />");
+                row.append($("<th></th>"));
+                row.append($("<th></th>"));
+                $("#balanceTable").append(row);
+            }
             function getUrlParameter(sParam)
             {
                 var sPageURL = window.location.search.substring(1);
@@ -31,20 +43,8 @@ else
                 }
                 return "";
             }
+
             var resBalance = {};
-            $(function() {
-                initTable();
-                var group = getUrlParameter("group");
-                if(group == "")
-                    return ;
-                document.title = "Cloud Account - " + group;
-                var url = "api/get.php?method=userBalance&group="+group+"&jsoncallback=?";
-                $.getJSON(url,
-                    function(dataGet) {
-                        resBalance = dataGet["result"];
-                        drawTable(resBalance, curFunc);
-                    });
-            });
         </script>
         <link rel="stylesheet" href="style.css">
     </head>
@@ -63,18 +63,6 @@ else
         </div>
         </div>
         <script type="text/javascript">
-            var initTable = function(){
-                $("#balanceTable").empty();
-                var row = $("<tr />");
-                row.append($("<th>User Name</th>"));
-                row.append($("<th>Balance</th>"));
-                $("#balanceTable").append(row);
-                row = $("<tr />");
-                row.append($("<th></th>"));
-                row.append($("<th></th>"));
-                $("#balanceTable").append(row);
-            };
-
             var cmp0Less = function(a,b){if(a<b) return -1; if(a>b) return 1; return 0;}
             var cmp0More = function(a,b){return cmp0Less(b,a);}
             var cmp1Less = function(a,b){return a[1]-b[1];}
@@ -128,6 +116,20 @@ else
                     addOneRecord(username.innerHTML);
                 }
             });
+            function checkSum() {
+                var sum = 0.0;
+                $(".moneyCell").each(function() {
+                    var cur = parseFloat(this.value);
+                    if(this.value.length==0 || this.value=="-")
+                        cur = 0.0;
+                    if(isNaN(cur)){
+                        sum = "NaN";
+                        return false;
+                    }
+                    sum += cur;
+                });
+                return sum;
+            }
 
             function addOneRecord(username) {
                 if(addOneRecord.names.indexOf(username) != -1)
@@ -141,12 +143,19 @@ else
                 tr.append(td);
                 td.append($("<input />", {
                     type: 'text',
-                    id: 'moneyCell',
+                    class: 'moneyCell',
                     name: username,
                     placeholder: 'Input Money'
                     }));
                 tr.append(td);
                 formInputTable.append(tr);
+                $("input.moneyCell").on("keyup", function(){
+                    var res = checkSum();
+                    if(isNaN(res))
+                        $("#checkSumCell").text("Please Check Your Input.");
+                    else
+                        $("#checkSumCell").text(res);
+                });
             };
             addOneRecord.names = [];
 
@@ -195,10 +204,21 @@ else
                 e.preventDefault();
                 addOneRecord.names = [];
                 $("#formInputTable").empty();
+                $("#checkSumCell").text(0);
             });
 
-            $("#moneyCell").on(function(){
-                alert("change");
+            $(function() {
+                initTable();
+                var group = getUrlParameter("group");
+                if(group == "")
+                    return ;
+                document.title = "Cloud Account - " + group;
+                var url = "api/get.php?method=userBalance&group="+group+"&jsoncallback=?";
+                $.getJSON(url,
+                    function(dataGet) {
+                        resBalance = dataGet["result"];
+                        drawTable(resBalance, curFunc);
+                    });
             });
         </script>
     </body>
