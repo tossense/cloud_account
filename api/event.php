@@ -48,7 +48,7 @@ function addEvent($eventJsonArray)
 	$groupId = getGroupId($group, $link)[$group];
 	$sqlArray["groupId"] = $groupId;
 	if($ts)
-		$sqlArray["time"] = "FROM_UNIXTIME($ts)";
+		$sqlArray["time"] = "FROM_UNIXTIME(".$ts.")";
 	if(!$groupId)
 	{
 		return retError($ret, "Invalid group name");

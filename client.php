@@ -9,11 +9,11 @@ else
 ?>
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-    <html lang="en">
+    <html lang="zh-CN">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Sample</title>
+        <title>Cloud Account</title>
         <!-- Include the latest version of jQuery library -->
         <script type="text/javascript" src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
         <script type="text/javascript">
@@ -33,6 +33,9 @@ else
             }
             $(function() {
                 var group = getUrlParameter("group");
+                if(group == "")
+                    return ;
+                document.title = "Cloud Account - " + group;
                 var url = "api/get.php?method=userBalance&group="+group+"&jsoncallback=?";
                 $.getJSON(url,
                     function(dataGet) {
@@ -131,6 +134,11 @@ else
                     var item = formArr[i];
                     var username = item["name"];
                     var money = item["value"];
+                    if(username.length==0 || money.length==0 || isNaN(money))
+                    {
+                        alert("Uncomplete Content.");
+                        return;
+                    }
                     postArr["records"][username] = money;
                 }
                 var postData = JSON.stringify(postArr);
