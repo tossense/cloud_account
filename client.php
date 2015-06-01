@@ -31,6 +31,7 @@ else
                 }
                 return "";
             }
+            var resBalance = {};
             $(function() {
                 var group = getUrlParameter("group");
                 if(group == "")
@@ -39,7 +40,8 @@ else
                 var url = "api/get.php?method=userBalance&group="+group+"&jsoncallback=?";
                 $.getJSON(url,
                     function(dataGet) {
-                        drawTable(dataGet["result"]);
+                        resBalance = dataGet["result"];
+                        drawTable(resBalance);
                     });
             });
         </script>
@@ -61,7 +63,9 @@ else
         <div id="inputEvent">
             <table id="checkSumTable"><tr><td>checksum:</td><td id="checkSumCell">0</td></tr></table>
             <form id="formInput" action="test.php", method="POST">
-                <table id="formInputTable"></table><input type="button" id="postEvent" value="Submit">
+                <table id="formInputTable"></table>
+                <input type="button" id="postEvent" value="Submit">
+                <input type="reset" id="clearTable" value="Reset">
             </form>
         </div>
         </div>
@@ -81,8 +85,7 @@ else
                     $("#balanceTable").append(row);
                 }
             }
-            var btable = document.getElementById("balanceTable");
-            btable.onclick = function (e) {
+            $("#balanceTable").click(function (e) {
                 e = e || window.event;
                 var data = [];
                 var target = e.srcElement || e.target;
@@ -95,7 +98,7 @@ else
                     var username = target.getElementsByTagName("td")[0];
                     addOneRecord(username.innerHTML);
                 }
-            };
+            });
 
             function addOneRecord(username) {
                 if(addOneRecord.names.indexOf(username) != -1)
@@ -118,8 +121,7 @@ else
             };
             addOneRecord.names = [];
 
-            var postEvent = document.getElementById("postEvent");
-            postEvent.onclick = function(e)
+            $("#postEvent").click(function(e)
             {
                 e.preventDefault(); //STOP default action
                 var formArr = $("#formInput").serializeArray();
@@ -157,7 +159,14 @@ else
                         alert("post data fail.")
                     }
                 });
-            }
+            });
+            
+            $("#clearTable").click(function(e)
+            {
+                e.preventDefault();
+                addOneRecord.names = [];
+                $("#formInputTable").empty();
+            });
 
             $("#moneyCell").on(function(){
                 alert("change");
