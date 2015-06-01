@@ -33,6 +33,7 @@ else
             }
             var resBalance = {};
             $(function() {
+                initTable();
                 var group = getUrlParameter("group");
                 if(group == "")
                     return ;
@@ -41,7 +42,7 @@ else
                 $.getJSON(url,
                     function(dataGet) {
                         resBalance = dataGet["result"];
-                        drawTable(resBalance);
+                        drawTable(resBalance, curFunc);
                     });
             });
         </script>
@@ -50,15 +51,7 @@ else
     <body>
         <div id="container">
         <div id="output">
-            <table id="balanceTable" align="center">
-                <tr>
-                    <th>User Name</th>
-                    <th>Balance</th>
-                </tr>
-                <tr>
-                    <th></th><th></th>
-                </tr>
-            </table>
+            <table id="balanceTable" align="center"></table>
         </div>
         <div id="inputEvent">
             <table id="checkSumTable"><tr><td>checksum:</td><td id="checkSumCell">0</td></tr></table>
@@ -70,27 +63,63 @@ else
         </div>
         </div>
         <script type="text/javascript">
-            var drawTable = function (nameBalance) {
+            var initTable = function(){
+                $("#balanceTable").empty();
+                var row = $("<tr />");
+                row.append($("<th>User Name</th>"));
+                row.append($("<th>Balance</th>"));
+                $("#balanceTable").append(row);
+                row = $("<tr />");
+                row.append($("<th></th>"));
+                row.append($("<th></th>"));
+                $("#balanceTable").append(row);
+            };
+
+            var cmp0Less = function(a,b){if(a<b) return -1; if(a>b) return 1; return 0;}
+            var cmp0More = function(a,b){return cmp0Less(b,a);}
+            var cmp1Less = function(a,b){return a[1]-b[1];}
+            var cmp1More = function(a,b){return cmp1Less(b,a);}
+            var curFunc = cmp1Less;
+            var drawTable = function (nameBalance, cmp) {
+                if (typeof(cmp)==='undefined')
+                    cmp = cmp1Less;
                 var arr = [];
                 for (var name in nameBalance){
                     arr.push([name, Number(nameBalance[name])]);
                 }
-                arr.sort(function(a,b){
-                    return a[1] - b[1];
-                })
+                arr.sort(cmp);
+                initTable();
                 for (var u in arr) {
                     var row = $("<tr />");
                     row.append($("<td>" + arr[u][0] + "</td>"));
                     row.append($("<td>" + arr[u][1] + "</td>"));
                     $("#balanceTable").append(row);
                 }
-            }
+            };
+
             $("#balanceTable").click(function (e) {
                 e = e || window.event;
                 var data = [];
                 var target = e.srcElement || e.target;
                 if(target.nodeName === "TH")
+                {
+                    if(target.textContent == "User Name")
+                    {
+                        if(curFunc == cmp0Less)
+                            curFunc = cmp0More;
+                        else
+                            curFunc = cmp0Less;
+                    }
+                    else if(target.textContent == "Balance")
+                    {
+                        if(curFunc == cmp1Less)
+                            curFunc = cmp1More;
+                        else
+                            curFunc = cmp1Less;
+                    }
+                    drawTable(resBalance, curFunc);
                     return;
+                }
                 while (target && target.nodeName !== "TR") {
                     target = target.parentNode;
                 }
