@@ -5,7 +5,10 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 {
 	if(!isset($_POST["username"]) || !isset($_POST["password"]))
 	{
-		header("Location:" . urlencode($_SERVER['REQUEST_URI']));
+		$loc = $_SERVER['HTTP_REFERER'];
+		if(substr_count($loc, "&retry") == 0)
+			$loc .= "&retry=1";
+		header("Location:" . $loc );
 		exit();
 	}
 	$posts = $_POST;
@@ -41,7 +44,10 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 		}
 	}
 
-	header("Location:" . urlencode($_SERVER['REQUEST_URI']));
+	$loc = $_SERVER['HTTP_REFERER'];
+	if(substr_count($loc, "&retry") == 0)
+		$loc .= "&retry=1";
+	header("Location:" . $loc );
 	exit();
 }
 else if($_SERVER['REQUEST_METHOD']=='GET')
@@ -53,7 +59,31 @@ else if($_SERVER['REQUEST_METHOD']=='GET')
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>Sample</title>
+		<title>Login - Cloud Account</title>
+		<script type="text/javascript" src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+		<script type="text/javascript">
+			function getUrlParameter(sParam)
+			{
+				var sPageURL = window.location.search.substring(1);
+				var sURLVariables = sPageURL.split('&');
+				for (var i = 0; i < sURLVariables.length; i++) 
+				{
+					var sParameterName = sURLVariables[i].split('=');
+					if (sParameterName[0] == sParam) 
+					{
+						return sParameterName[1];
+					}
+				}
+				return "";
+			}
+			$(function(){
+				var retry = getUrlParameter("retry");
+				if(retry == "")
+					return;
+				var p = $("<p align=\"center\"> Wrong Username or Password. Please Retry Again. </p>");
+				$(document.body).append(p);
+			});
+		</script>
 	</head>
 	<body> 
 		<form name="form1" method="post" action="login.php">
