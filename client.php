@@ -22,12 +22,22 @@ else
                 $("#balanceTable").empty();
                 var row = $("<tr />");
                 row.append($("<th>User Name</th>"));
+                row.append($("<th>Nickname</th>"));
                 row.append($("<th>Balance</th>"));
                 $("#balanceTable").append(row);
                 row = $("<tr />");
                 row.append($("<th></th>"));
                 row.append($("<th></th>"));
+                row.append($("<th></th>"));
                 $("#balanceTable").append(row);
+
+                $("#lastEventTable").empty();
+                var row = $("<tr />");
+                row.append($("<th>time</th>"));
+                row.append($("<th>place</th>"));
+                row.append($("<th>comment</th>"));
+                row.append($("<th>records</th>"));
+                $("#lastEventTable").append(row);
             }
             function getUrlParameter(sParam)
             {
@@ -45,6 +55,7 @@ else
             }
 
             var resBalance = {};
+            var nicknames = {};
         </script>
         <link rel="stylesheet" href="style.css">
     </head>
@@ -53,7 +64,7 @@ else
         <div id="output">
             <table id="balanceTable" align="center"></table>
         </div>
-        <div id="inputEvent">
+        <div id="inputEvent" class="leftBar">
             <table id="checkSumTable"><tr><td>checksum:</td><td id="checkSumCell">0</td></tr></table>
             <form id="formInput" action="test.php", method="POST">
                 <table id="formInputTable"></table>
@@ -62,13 +73,16 @@ else
             </form>
         </div>
         </div>
+        <div id="lastEventDiv">
+            <table id="lastEventTable"></table>
+        </div>
         <script type="text/javascript">
             var cmp0Less = function(a,b){if(a<b) return -1; if(a>b) return 1; return 0;}
             var cmp0More = function(a,b){return cmp0Less(b,a);}
             var cmp1Less = function(a,b){return a[1]-b[1];}
             var cmp1More = function(a,b){return cmp1Less(b,a);}
             var curFunc = cmp1Less;
-            var drawTable = function (nameBalance, cmp) {
+            var drawTable = function (nameBalance, nicknames, cmp) {
                 if (typeof(cmp)==='undefined')
                     cmp = cmp1Less;
                 var arr = [];
@@ -78,12 +92,35 @@ else
                 arr.sort(cmp);
                 initTable();
                 for (var u in arr) {
+                    var username = arr[u][0];
+                    var balance = arr[u][1];
                     var row = $("<tr />");
-                    row.append($("<td>" + arr[u][0] + "</td>"));
-                    row.append($("<td>" + arr[u][1] + "</td>"));
+                    row.append($("<td>" + username + "</td>"));
+                    row.append($("<td>" + nicknames[username] + "</td>"))
+                    row.append($("<td>" + balance + "</td>"));
                     $("#balanceTable").append(row);
                 }
             };
+            var drawEvents = function(eventsArr) {
+                for(var idx in eventsArr){
+                    var ev = eventsArr[idx];
+                    var evTime = "";
+                    var evPlace = ev["place"] ? ev["place"] : "";
+                    var evComment = ev["comment"] ? ev["comment"] : "";
+                    var evRecords = ev["records"] ? ev["records"] : "";
+                    if(ev["time"].length>0) {
+                        var t = new Date( ev["time"]*1000 );
+                        if(t.toString() != "Invalid Date")
+                            evTime = t.toLocaleString('zh-CN');
+                    }
+                    var row = $("<tr />");
+                    row.append($("<td>" + evTime + "</td>"));
+                    row.append($("<td>" + evPlace + "</td>"))
+                    row.append($("<td>" + evComment + "</td>"));
+                    row.append($("<td>" + evRecords + "</td>"));
+                    $("#lastEventTable").append(row);
+                }
+            }
 
             $("#balanceTable").click(function (e) {
                 e = e || window.event;
@@ -105,7 +142,7 @@ else
                         else
                             curFunc = cmp1Less;
                     }
-                    drawTable(resBalance, curFunc);
+                    drawTable(resBalance, nicknames, curFunc);
                     return;
                 }
                 while (target && target.nodeName !== "TR") {
@@ -217,8 +254,14 @@ else
                 $.getJSON(url,
                     function(dataGet) {
                         resBalance = dataGet["result"];
-                        drawTable(resBalance, curFunc);
+                        nicknames = dataGet["nicknames"];
+                        drawTable(resBalance, nicknames, curFunc);
                     });
+                url = "api/get.php?method=eventList&group="+group+"&last=3&jsoncallback=?";
+                $.getJSON(url,
+                    function(dataGet) {
+                        drawEvents(dataGet["result"]);
+                    })
             });
         </script>
     </body>

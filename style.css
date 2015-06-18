@@ -1,7 +1,7 @@
 tr:nth-child(even) {background: #CCF}
 tr:nth-child(odd) {background: #FFF}
 body {
-	font: normal 100% Helvetica, Arial, sans-serif;
+	font: normal 100% SimHei, Helvetica, Arial, sans-serif;
 }
 h1 {
 	font-size: 1.5em; 
@@ -9,11 +9,14 @@ h1 {
 small {
 	font-size: 0.875em;
 }
-.main {
+.rightBar {
 	float: right;
-	width: 70%; 
+	width: 30%; 
 }
 .leftBar {
 	float: left;
 	width: 25%;
+	position: fixed;
+	top: 20px;
+	left: 20%;
 }

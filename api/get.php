@@ -8,7 +8,7 @@ require_once('../private/lib/ca_db.php');
 //Now we check if the function exists
 if(function_exists($_GET['method'])){
     $ret = json_encode($_GET['method']());
-    if($_GET['jsoncallback'])
+    if( isset($_GET['jsoncallback']) )
         $ret = $_GET['jsoncallback'].'('.$ret.')';
     echo $ret;
 }
@@ -24,24 +24,23 @@ function userBalance()
 {
     $ret = array();
     $ret["status"] = "OK";
-    if(!$_GET['group'])
+    if(!isset($_GET['group']))
     {
         return retError($ret, "No Group Param");
+    }
+    $group = $_GET['group'];
+    if(strlen($group) > 50)
+    {
+        return retError($ret, "Group name too long");
     }
     $link = connectCaDb($ret);
     if($link->connect_errno)
     {
         return $ret;
     }
-
-    $group = $_GET['group'];
-    if(strlen($group) > 50)
-    {
-        return retError($ret, "Group name too long");
-    }
     $group = $link->real_escape_string($group);
     $sql = <<<EOD
-        SELECT tbUsers.name, tbGroupMembers.balance
+        SELECT tbUsers.name, tbUsers.nickname, tbGroupMembers.balance
         FROM tbUsers, tbGroupMembers, tbGroups
         WHERE tbGroupMembers.groupId=tbGroups.id
             AND tbGroups.name='$group'
@@ -61,9 +60,11 @@ EOD;
     if($res)
     {
         $ret["result"] = array();
+        $ret["nicknames"] = array();
         while($row = $res->fetch_assoc())
         {
             $ret["result"][$row["name"]] = $row["balance"];
+            $ret["nicknames"][$row["name"]] = $row["nickname"];
         }
     }
     $link->close();
@@ -107,16 +108,45 @@ function eventsList()
     {
         return $ret;
     }
-    $sql = "SELECT UNIX_TIMESTAMP(time) AS time, place, comment FROM tbEvents";
+    if(!isset($_GET['group']))
+    {
+        return retError($ret, "No Group Param");
+    }
+    if(!isset($_GET['last']))
+    {
+        return retError($ret, "No Last Param");
+    }
+    $group = $_GET['group'];
+    $last = $_GET['last'];
+    if($last > 100000 || $last<=0 )
+        $last = 3;
+    if(strlen($group) > 50)
+    {
+        return retError($ret, "Group name too long");
+    }
+    $group = $link->real_escape_string($group);
+    $sql = "SELECT id, UNIX_TIMESTAMP(time) AS time, place, comment FROM tbEvents ORDER BY time DESC, id DESC LIMIT 3";
+    $sql = "SELECT tbEvents.id, tbRecords.userId, tbRecords.money FROM tbRecords LEFT JOIN tbEvents ON tbEvents.id=tbRecords.eventId";
+    $sql = <<<EOD
+    SELECT UNIX_TIMESTAMP(tbEvents.time) AS time, tbEvents.place, tbEvents.comment, GROUP_CONCAT(tbUsers.name,":", tbRecords.money) AS records
+    FROM tbUsers, tbEvents, tbRecords, tbGroups
+    WHERE tbEvents.groupId=tbGroups.id
+        AND tbGroups.name='$group'
+        AND tbUsers.id=tbRecords.userId
+        AND tbEvents.id=tbRecords.eventId
+    GROUP BY tbEvents.id ORDER BY tbEvents.id DESC LIMIT $last
+EOD;
     $res = queryAndLogError($link, $sql, $ret);
     if($res)
     {
         $ret["result"] = array();
         while($row = $res->fetch_assoc())
         {
-            $ret["result"][]["time"] = $row["time"];
-            $ret["result"][]["place"] = $row["place"];
-            $ret["result"][]["comment"] = $row["comment"];
+            //$ret["result"][]["time"] = $row["time"];
+            //$ret["result"][]["place"] = $row["place"];
+            //$ret["result"][]["comment"] = $row["comment"];
+            $event = $row;
+            $ret["result"][] = $row;
         }
     }
     $link->close();

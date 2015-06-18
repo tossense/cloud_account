@@ -13,6 +13,8 @@ function connectCaDb($ret=null)
 		$ret["status"] = "ERROR";
 		$ret["info"] = $link->connect_error;
 	}
+	$link->query("set character set 'utf8'");
+	$link->query("set names 'utf8'");
 	return $link;
 }
 
