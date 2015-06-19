@@ -17,7 +17,7 @@ else
         <!-- Include the latest version of jQuery library -->
         <script type="text/javascript" src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
         <script type="text/javascript">
-            function initTable()
+            function initBalanceTable()
             {
                 $("#balanceTable").empty();
                 var row = $("<tr />");
@@ -30,7 +30,9 @@ else
                 row.append($("<th></th>"));
                 row.append($("<th></th>"));
                 $("#balanceTable").append(row);
-
+            }
+            function initEventTable()
+            {
                 $("#lastEventTable").empty();
                 var row = $("<tr />");
                 row.append($("<th>time</th>"));
@@ -90,7 +92,7 @@ else
                     arr.push([name, Number(nameBalance[name])]);
                 }
                 arr.sort(cmp);
-                initTable();
+                initBalanceTable();
                 for (var u in arr) {
                     var username = arr[u][0];
                     var balance = arr[u][1];
@@ -102,6 +104,7 @@ else
                 }
             };
             var drawEvents = function(eventsArr) {
+                initEventTable();
                 for(var idx in eventsArr){
                     var ev = eventsArr[idx];
                     var evTime = "";
@@ -200,6 +203,8 @@ else
             {
                 e.preventDefault(); //STOP default action
                 var formArr = $("#formInput").serializeArray();
+                if(formArr.length==0)
+                    return;
                 var postArr = {};
                 var group = getUrlParameter("group");
                 if(group == "")
@@ -245,7 +250,8 @@ else
             });
 
             $(function() {
-                initTable();
+                initBalanceTable();
+                initEventTable();
                 var group = getUrlParameter("group");
                 if(group == "")
                     return ;
