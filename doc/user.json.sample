@@ -1,0 +1,7 @@
+{
+	"action": "addUser",
+	"username": "name",
+	"password": "pw",
+	"nickname": "xyz",
+	"group": "dataminers"
+}
