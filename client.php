@@ -14,8 +14,9 @@ else
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Cloud Account</title>
-        <!-- Include the latest version of jQuery library -->
-        <script type="text/javascript" src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+        <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+        <script src="http://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
         <script type="text/javascript">
             function initBalanceTable()
             {
@@ -62,6 +63,37 @@ else
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
+        <nav class="navbar navbar-default navbar-static-top" role="navigation">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Cloud Account</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav navbar-left">
+                    <li><a href="#"> </a></li>
+                    <li><a href="#">Account Book</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="adduser.php">+Add User</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                           Settings <b class="caret"></b>
+                       </a>
+                       <ul class="dropdown-menu">
+                           <li><a href="#">Profile</a></li>
+                           <li><a href="#">Logout</a></li>
+                           <li><a href="#">About</a></li>
+                           <li class="divider"></li>
+                           <li><a href="#">Test0</a></li>
+                           <li class="divider"></li>
+                           <li><a href="#">Test1</a></li>
+                       </ul>
+                   </li>
+                   <li><a href="#"> </a></li>
+                   <li><a href="#"> </a></li>
+                   <li><a href="#"> </a></li>
+               </ul>
+           </div>
+        </nav>
         <div id="container">
         <div id="output">
             <table id="balanceTable" align="center"></table>

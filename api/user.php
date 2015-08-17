@@ -9,6 +9,10 @@ $postData = file_get_contents("php://input");
 if($postData)
 {
 	$postJson = json_decode($postData, true);
+	if(!$postJson)
+	{
+		$postJson = $_POST;
+	}
 	$ret = array();
 	if($postJson["action"] == "addUser")
 	{
@@ -25,7 +29,11 @@ else
 function addUser($postJson)
 {
 	$u = $postJson['username'];
-	$p = $postJson['password'];
+	$p = $u;
+	if(isset($postJson['password']))
+	{
+		$p = $postJson['password'];
+	}
 	$nn = $u;
 	if(isset($postJson['nickname']))
 	{
