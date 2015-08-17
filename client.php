@@ -73,7 +73,7 @@ else
                     <li><a href="#">Account Book</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="adduser.php">+Add User</a></li>
+                    <li><a href="adduser.php" target="view_window">+Add User</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                            Settings <b class="caret"></b>
