@@ -26,6 +26,11 @@ function addUser($postJson)
 {
 	$u = $postJson['username'];
 	$p = $postJson['password'];
+	$nn = $u;
+	if(isset($postJson['nickname']))
+	{
+		$nn = $postJson['nickname'];
+	}
 	$ret = array();
 	$ret["status"] = "OK";
 	if( !isValidUserName($u) )
@@ -39,7 +44,8 @@ function addUser($postJson)
 	}
 	$u = $link->real_escape_string($u);
 	$p = passwordEncrypt($p);
-	$sql = "INSERT INTO tbUsers (name, password) VALUES ('$u', '$p')";
+	$nn = $link->real_escape_string($nn);
+	$sql = "INSERT INTO tbUsers (name, password, nickname) VALUES ('$u', '$p', '$nn')";
 	if(!$link->query($sql))
 	{
 		return retError($ret, "sql insert error: ".$link->error);
