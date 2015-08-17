@@ -263,7 +263,7 @@ else
                         nicknames = dataGet["nicknames"];
                         drawTable(resBalance, nicknames, curFunc);
                     });
-                url = "api/get.php?method=eventList&group="+group+"&last=3&jsoncallback=?";
+                url = "api/get.php?method=eventList&group="+group+"&last=5&jsoncallback=?";
                 $.getJSON(url,
                     function(dataGet) {
                         drawEvents(dataGet["result"]);
