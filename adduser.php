@@ -36,7 +36,7 @@
 			</tr>
 			<tr> 
 				<td><div align="right">Group</div></td> 
-				<td><input type="text" name="group" value="dataminers"></td> 
+				<td><input type="text" name="group" value=""></td> 
 			</tr>
 		</table>
 		<input type="hidden" name="action" value="addUser">
