@@ -1,15 +1,20 @@
 <?php
 require_once('private/lib/ca_encrypt.php');
 require_once('private/lib/ca_db.php');
+function exitLoginFail()
+{
+	$loc = $_SERVER['HTTP_REFERER'];
+	if(substr_count($loc, "&retry") == 0)
+		$loc .= "&retry=1";
+	header("Location:" . $loc );
+	exit();
+}
+
 if($_SERVER['REQUEST_METHOD']=='POST')
 {
 	if(!isset($_POST["username"]) || !isset($_POST["password"]))
 	{
-		$loc = $_SERVER['HTTP_REFERER'];
-		if(substr_count($loc, "&retry") == 0)
-			$loc .= "&retry=1";
-		header("Location:" . $loc );
-		exit();
+		exitLoginFail();
 	}
 	$posts = $_POST;
 	foreach ($posts as $key => $value) {
@@ -21,7 +26,7 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 	$ret = array();
 	$ret["status"] = "OK";
 	$link = connectCaDb($ret);
-
+	$username = $link->real_escape_string($username);
 	$query = "SELECT `name` FROM `tbUsers` WHERE `password` = '$password' AND `name` = '$username'";
 	$userInfo = $link->query($query);
 	if($userInfo && $userInfo->num_rows>0)
@@ -44,18 +49,14 @@ if($_SERVER['REQUEST_METHOD']=='POST')
 		}
 	}
 
-	$loc = $_SERVER['HTTP_REFERER'];
-	if(substr_count($loc, "&retry") == 0)
-		$loc .= "&retry=1";
-	header("Location:" . $loc );
-	exit();
+	exitLoginFail();
 }
 else if($_SERVER['REQUEST_METHOD']=='GET')
 {
 ?>
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-	<html lang="en">
+	<html lang="zh_CN">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
