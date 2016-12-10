@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>Add User - Cloud Account</title>
-	<script type="text/javascript" src="https://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
+	<script type="text/javascript" src="//cdn.bootcss.com/jquery/2.2.4/jquery.js"></script>
 	<script type="text/javascript">
 		function getUrlParameter(sParam)
 		{

@@ -14,9 +14,8 @@ else
         <meta charset="UTF-8">
         <!-- <meta name="viewport" content="width=device-width, initial-scale=1" /> -->
         <title>Cloud Account</title>
-        <link href="https://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
-        <script src="https://libs.baidu.com/jquery/2.0.3/jquery.min.js"></script>
-        <script src="https://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+        <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
         <script type="text/javascript">
             function initBalanceTable()
             {
